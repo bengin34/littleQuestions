@@ -1,17 +1,28 @@
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './App.css'
 
 const FORM_ENDPOINT = "https://formspree.io/f/xgojyaer"
 
 const TRANSLATIONS = {
   tr: {
+    logoName: "Merak Defteri",
     navCta: "Haberi al",
     heroBadge: "✦ Yakında geliyor",
     heroH1Before: "Çocuğunuz ",
     heroH1Em: "zor soru",
     heroH1After: " sorunca",
     heroH1Line2: "donup kalmayın.",
-    heroP: '"Allah nerede?", "Ölünce ne olur?", "Neden namaz kılıyoruz?" —\nkendi sesinizle, sakin bir şekilde cevaplamanızı sağlıyoruz.',
+    heroSub: "Uzmanlar tarafından, çocuğunuzun yaşına göre hazırlanmış cevaplar.",
+    heroQuestions: [
+      "Dedem nereye gitti, artık hiç gelmeyecek mi?",
+      "Sen de bir gün ölecek misin?",
+      "Allah bizi görüyor mu şu an?",
+      "Cennet gerçek mi, oraya nasıl gidilir?",
+      "Neden dua ediyoruz, Allah duyuyor mu?",
+      "Öldükten sonra bizi hatırlayan olur mu?",
+      "Kötü insanlar cehenneme mi gider?",
+      "Biz ölünce nerede olacağız?",
+    ],
     emailPlaceholder: "E-posta adresiniz",
     emailBtn: "Haberdar et",
     emailLoading: "Gönderiliyor…",
@@ -38,7 +49,7 @@ const TRANSLATIONS = {
     planFreeAmount: "0",
     planDisclaimer: "Ödeme alınmaz. Ön kayıt = fiyat garantisi ve erken erişim.",
     footerP1: "E-postanızı yalnızca lansman haberi için kullanırız. Üçüncü taraflarla paylaşılmaz.",
-    footerP2: "© 2025 Little Questions",
+    footerP2: "© 2025 Merak Defteri",
     toastDemo: "Kaydedildi! (demo mod)",
     toastSuccess: "E-posta alındı, teşekkürler!",
     toastError: "Bir hata oluştu, tekrar deneyin.",
@@ -46,13 +57,24 @@ const TRANSLATIONS = {
     toastPricing: (plan) => `${plan} — ön kayıt isteği alındı.`,
   },
   de: {
+    logoName: "Little Questions",
     navCta: "Benachrichtigen",
     heroBadge: "✦ Demnächst verfügbar",
     heroH1Before: "Nie mehr sprachlos, wenn Ihr Kind ",
     heroH1Em: "schwierige Fragen",
     heroH1After: " stellt.",
     heroH1Line2: "",
-    heroP: '"Wo lebt Gott?", "Was passiert nach dem Tod?", "Warum beten wir?" —\nwir helfen Ihnen, ruhig und mit Ihren eigenen Worten zu antworten.',
+    heroSub: "Von Experten entwickelte, altersgerechte Antworten für Ihr Kind.",
+    heroQuestions: [
+      "Wo ist Opa jetzt — kommt er nie wieder?",
+      "Stirbst du auch mal, Mama?",
+      "Sieht Gott uns gerade zu?",
+      "Gibt es den Himmel wirklich?",
+      "Warum beten wir, hört Gott uns zu?",
+      "Erinnert sich jemand an uns, wenn wir sterben?",
+      "Kommen böse Menschen in die Hölle?",
+      "Wo sind wir, wenn wir gestorben sind?",
+    ],
     emailPlaceholder: "Ihre E-Mail-Adresse",
     emailBtn: "Benachrichtigen",
     emailLoading: "Wird gesendet…",
@@ -72,9 +94,9 @@ const TRANSLATIONS = {
     planFamilyTitle: "Familie",
     planBadge: "Am beliebtesten",
     planFamilyFeatures: ["Unbegrenzte Fragen", "Kategorien 3–12 Jahre", "Pädagogisch geprüfte Antworten", "Türkisch + Deutsch"],
-    planFamilyBtn: "Für ₺49 vorregistrieren",
-    planFamilyAmount: "49",
-    planFamilyCurrency: "₺",
+    planFamilyBtn: "Für €3,99 vorregistrieren",
+    planFamilyAmount: "3,99",
+    planFamilyCurrency: "€",
     planPeriod: "/Mo.",
     planFreeAmount: "0",
     planDisclaimer: "Keine Zahlung. Vorregistrierung = Preisgarantie & Frühzugang.",
@@ -87,13 +109,24 @@ const TRANSLATIONS = {
     toastPricing: (plan) => `${plan} — Vorregistrierung eingegangen.`,
   },
   en: {
+    logoName: "Little Questions",
     navCta: "Get notified",
     heroBadge: "✦ Coming soon",
     heroH1Before: "Stop freezing when your child asks a ",
     heroH1Em: "hard question",
     heroH1After: ".",
     heroH1Line2: "",
-    heroP: '"Where does God live?", "What happens when we die?", "Why do we pray?" —\nwe help you answer calmly, in your own words.',
+    heroSub: "Expert-crafted answers, tailored to your child's age.",
+    heroQuestions: [
+      "Where did grandpa go — is he never coming back?",
+      "Are you going to die too, mommy?",
+      "Is God watching us right now?",
+      "Is heaven a real place?",
+      "Why do we pray — does God actually hear us?",
+      "Will anyone remember us after we die?",
+      "Do bad people really go to hell?",
+      "Where will we be when we're gone?",
+    ],
     emailPlaceholder: "Your email address",
     emailBtn: "Notify me",
     emailLoading: "Sending…",
@@ -113,9 +146,9 @@ const TRANSLATIONS = {
     planFamilyTitle: "Family",
     planBadge: "Most popular",
     planFamilyFeatures: ["Unlimited questions", "Ages 3–12 categories", "Pedagogically approved answers", "Turkish + German"],
-    planFamilyBtn: "Pre-register for ₺49",
-    planFamilyAmount: "49",
-    planFamilyCurrency: "₺",
+    planFamilyBtn: "Pre-register for $3.99",
+    planFamilyAmount: "3.99",
+    planFamilyCurrency: "$",
     planPeriod: "/mo",
     planFreeAmount: "0",
     planDisclaimer: "No payment. Pre-register = price guarantee & early access.",
@@ -194,6 +227,45 @@ const STEPS = {
 
 const LANG_LABELS = { tr: "TR", de: "DE", en: "EN" }
 
+function useTypewriter(strings, lang) {
+  const [displayed, setDisplayed] = useState('')
+  const [idx, setIdx] = useState(0)
+  const [deleting, setDeleting] = useState(false)
+
+  useEffect(() => {
+    setDisplayed('')
+    setIdx(0)
+    setDeleting(false)
+  }, [lang])
+
+  useEffect(() => {
+    const current = strings[idx % strings.length]
+    const TYPE_SPEED = 55
+    const DELETE_SPEED = 30
+    const PAUSE_MS = 2400
+
+    if (!deleting) {
+      if (displayed.length < current.length) {
+        const t = setTimeout(() => setDisplayed(current.slice(0, displayed.length + 1)), TYPE_SPEED)
+        return () => clearTimeout(t)
+      } else {
+        const t = setTimeout(() => setDeleting(true), PAUSE_MS)
+        return () => clearTimeout(t)
+      }
+    } else {
+      if (displayed.length > 0) {
+        const t = setTimeout(() => setDisplayed(d => d.slice(0, -1)), DELETE_SPEED)
+        return () => clearTimeout(t)
+      } else {
+        setIdx(i => i + 1)
+        setDeleting(false)
+      }
+    }
+  }, [displayed, deleting, idx, strings])
+
+  return displayed
+}
+
 export default function App() {
   const [lang, setLang] = useState('tr')
   const [email, setEmail] = useState('')
@@ -204,6 +276,7 @@ export default function App() {
   const t = TRANSLATIONS[lang]
   const quotes = QUOTES[lang]
   const steps = STEPS[lang]
+  const typedQuestion = useTypewriter(t.heroQuestions, lang)
 
   const showToast = (msg) => {
     setToast(msg)
@@ -256,7 +329,7 @@ export default function App() {
 
       {/* Nav */}
       <nav className="nav">
-        <span className="nav-logo">Little Questions</span>
+        <span className="nav-logo">{t.logoName}</span>
         <div className="nav-right">
           <div className="lang-switcher">
             {Object.keys(LANG_LABELS).map(l => (
@@ -281,11 +354,15 @@ export default function App() {
           {t.heroH1Before}<em>{t.heroH1Em}</em>{t.heroH1After}
           {t.heroH1Line2 && <><br />{t.heroH1Line2}</>}
         </h1>
-        <p>
-          {t.heroP.split('\n').map((line, i) => (
-            <span key={i}>{line}{i === 0 && <br />}</span>
-          ))}
-        </p>
+
+        <div className="typewriter-wrap">
+          <span className="tw-quote">"</span>
+          <span className="tw-text">{typedQuestion}</span>
+          <span className="tw-cursor">|</span>
+          <span className="tw-quote">"</span>
+        </div>
+
+        <p className="hero-sub">{t.heroSub}</p>
 
         {submitted ? (
           <p className="success-msg">{t.successMsg}</p>
@@ -350,8 +427,8 @@ export default function App() {
           <div className="plan">
             <h3>{t.planFreeTitle}</h3>
             <div className="plan-price">
-              <span className="amount">{t.planFreeAmount}</span>
               <span className="currency">{t.planFamilyCurrency}</span>
+              <span className="amount">{t.planFreeAmount}</span>
               <span className="period">{t.planPeriod}</span>
             </div>
             <ul className="plan-features">
@@ -366,8 +443,8 @@ export default function App() {
             <span className="plan-badge">{t.planBadge}</span>
             <h3>{t.planFamilyTitle}</h3>
             <div className="plan-price">
-              <span className="amount">{t.planFamilyAmount}</span>
               <span className="currency">{t.planFamilyCurrency}</span>
+              <span className="amount">{t.planFamilyAmount}</span>
               <span className="period">{t.planPeriod}</span>
             </div>
             <ul className="plan-features">
@@ -384,7 +461,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="footer">
-        <span className="footer-logo">Little Questions</span>
+        <span className="footer-logo">{t.logoName}</span>
         <p>{t.footerP1}</p>
         <p>{t.footerP2}</p>
       </footer>

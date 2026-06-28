@@ -100,6 +100,42 @@
   color: var(--muted);
   max-width: 540px;
 }
+.hero-sub {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 480px;
+  text-align: center;
+}
+
+/* ── Typewriter ── */
+.typewriter-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  min-height: 72px;
+  font-family: Georgia, serif;
+  font-size: clamp(28px, 5vw, 44px);
+  font-style: italic;
+}
+.tw-quote {
+  color: var(--gold);
+  opacity: 0.6;
+  font-size: 1.2em;
+  line-height: 1;
+}
+.tw-text {
+  color: var(--gold);
+}
+.tw-cursor {
+  color: var(--gold);
+  font-style: normal;
+  font-weight: 300;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
 
 /* ── Email form ── */
 .email-form {
